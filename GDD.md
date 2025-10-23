@@ -132,7 +132,7 @@ Entreprise (⚪) → 3 employés, 1 machine, 12 revenus
 ## 🎴 9. Phase 4 — Événements
 
 **Distribution des événements**
-Chaque joueur actif reçoit **1 événement aléatoire** par tour (tiré selon les probabilités ci-dessous).
+**1 seul événement** est tiré par tour et affecte **un joueur choisi aléatoirement** (déterminé par un dé). Ce joueur unique subit l'événement tiré selon les probabilités ci-dessous.
 
 ### 🟢 BONUS (40 %)
 - *Subvention innovation :* +1⭐, +2 revenus  

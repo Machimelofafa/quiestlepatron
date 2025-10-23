@@ -142,30 +142,34 @@ class SimulatorGame extends Game {
     processEventSilent() {
         const activePlayers = this.players.filter(p => !p.bankrupt);
 
-        // Apply 1 event per player
-        for (const player of activePlayers) {
-            const random = Math.random();
-            let eventType, eventList;
+        // Apply only 1 event per turn to a random player
+        if (activePlayers.length === 0) return;
 
-            if (random < 0.4) {
-                eventType = 'BONUS';
-                eventList = EVENTS.BONUS;
-            } else if (random < 0.8) {
-                eventType = 'MALUS';
-                eventList = EVENTS.MALUS;
-            } else {
-                eventType = 'CHOICE';
-                eventList = EVENTS.CHOICE;
-            }
+        // Use dice to randomly select a player
+        const diceRoll = Math.floor(Math.random() * activePlayers.length);
+        const selectedPlayer = activePlayers[diceRoll];
 
-            const event = eventList[Math.floor(Math.random() * eventList.length)];
+        const random = Math.random();
+        let eventType, eventList;
 
-            // Apply event to player or game
-            if (event.effect === 'malus' && event.name === 'Crise') {
-                event.apply(this);
-            } else {
-                event.apply(player);
-            }
+        if (random < 0.4) {
+            eventType = 'BONUS';
+            eventList = EVENTS.BONUS;
+        } else if (random < 0.8) {
+            eventType = 'MALUS';
+            eventList = EVENTS.MALUS;
+        } else {
+            eventType = 'CHOICE';
+            eventList = EVENTS.CHOICE;
+        }
+
+        const event = eventList[Math.floor(Math.random() * eventList.length)];
+
+        // Apply event to player or game
+        if (event.effect === 'malus' && event.name === 'Crise') {
+            event.apply(this);
+        } else {
+            event.apply(selectedPlayer);
         }
     }
 

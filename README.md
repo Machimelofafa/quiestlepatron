@@ -25,7 +25,7 @@ Prototype webapp du jeu de gestion économique "Qui est le Patron?". Incarnez un
 1. **Production & Dépenses** : Recrutez, achetez des machines, investissez en réputation
 2. **Marché** : Vendez votre production selon votre réputation
 3. **Impôts** : Payez 20% de revenus + charges + taxes de structure
-4. **Événements** : Événements aléatoires (bonus, malus, choix)
+4. **Événements** : 1 événement aléatoire par tour affecte un joueur choisi au hasard (bonus, malus, choix)
 
 ### Ressources
 
