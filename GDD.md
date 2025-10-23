@@ -19,9 +19,12 @@ Deux conditions de victoire :
 | ⚪ **Entreprise** | Argent | 10 000 € symboliques | 10 🟤 = 1 ⚪ | Argent |
 | 🟡 **Groupe** | Or | 100 000 € symboliques | 10 ⚪ = 1 🟡 | Or |
 
-**Jetons indivisibles**  
-Toutes les transactions s’arrondissent à l’unité inférieure.  
+**Jetons indivisibles**
+Toutes les transactions s'arrondissent à l'unité inférieure.
 La conversion de couleur matérialise la croissance.
+
+**Capital de départ**
+Chaque joueur commence avec **50 jetons Bronze** (🟤).
 
 ## 🔄 3. Cycle du jeu
 
@@ -87,7 +90,7 @@ Production totale = (2 × 👷) + (10 × ⚙️)
 
 ### Étape A — Déterminer la taille du marché
 ```
-Marché total = (2D6 × nombre de joueurs) + somme des coefficients de taille
+Marché total = (2D6 × nombre de joueurs × 2) + (somme des coefficients de taille × 2)
 ```
 
 | Type d’entreprise | Coefficient |
@@ -127,6 +130,9 @@ Entreprise (⚪) → 3 employés, 1 machine, 12 revenus
 → 2 impôts + 3 + 2 + 1 = **8 jetons**.
 
 ## 🎴 9. Phase 4 — Événements
+
+**Distribution des événements**
+Chaque joueur actif reçoit **1 événement aléatoire** par tour (tiré selon les probabilités ci-dessous).
 
 ### 🟢 BONUS (40 %)
 - *Subvention innovation :* +1⭐, +2 revenus  
@@ -198,10 +204,29 @@ Entreprise (⚪) → 3 employés, 1 machine, 12 revenus
 - 2 dés D6  
 
 ### Style visuel
-Design “économie cartoon réaliste”, couleurs chaudes, ton humoristique.  
+Design "économie cartoon réaliste", couleurs chaudes, ton humoristique.
 Sons : caisse enregistreuse, cliquetis de pièces, ambiance de bureau.
 
-## 🧩 15. Exemple de tour (résumé)
+## 🤖 15. Mode Simulation & Intelligence Artificielle
+
+Le jeu inclut un mode simulation permettant de tester l'équilibrage économique et d'analyser les stratégies.
+
+### Stratégies d'IA disponibles
+- **🎯 Équilibrée** : Achète des machines à partir de 25 jetons, recrute jusqu'à 4 employés, investit régulièrement en R&D
+- **⚡ Agressive** : Achète des machines dès 22 jetons (peut en acheter 2 à la fois quand riche), recrute jusqu'à 5 employés, marketing constant
+- **🛡️ Conservatrice** : Maintient un buffer de 3 tours de charges, n'investit qu'avec un surplus, privilégie la stabilité
+- **⭐ Réputation** : Double investissement en R&D, marketing systématique, recrute 2-4 employés pour maximiser la réputation
+
+### Simulation de matchs
+- Possibilité de lancer **1 à 1000 matchs** automatiques
+- Chaque match génère des données de performance
+- Export des résultats en **fichier CSV** pour analyse statistique
+- Données exportées : type de victoire, durée, jetons finaux, structure productive de chaque joueur
+
+**Utilité :**
+Permet d'identifier les déséquilibres économiques, tester des modifications de règles, et valider que plusieurs stratégies viables coexistent.
+
+## 🧩 16. Exemple de tour (résumé)
 
 1. **Phase 1 – Production**
    - 3 👷, 1 ⚙️ → produit = 16 unités  
