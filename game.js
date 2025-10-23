@@ -622,3 +622,78 @@ document.getElementById('start-game').addEventListener('click', () => {
         game.init(playerCount);
     }
 });
+
+// Simulation modal handling
+const API_URL = 'http://localhost:8000';
+
+document.getElementById('open-simulation').addEventListener('click', () => {
+    document.getElementById('simulation-modal').classList.remove('hidden');
+});
+
+document.getElementById('cancel-simulation').addEventListener('click', () => {
+    document.getElementById('simulation-modal').classList.add('hidden');
+    document.getElementById('simulation-status').classList.add('hidden');
+});
+
+document.getElementById('start-simulation').addEventListener('click', async () => {
+    const numMatches = parseInt(document.getElementById('num-matches').value);
+
+    if (numMatches < 1 || numMatches > 1000) {
+        alert('Le nombre de matchs doit être entre 1 et 1000');
+        return;
+    }
+
+    // Show status
+    const statusDiv = document.getElementById('simulation-status');
+    const statusMessage = document.getElementById('simulation-message');
+    statusDiv.classList.remove('hidden');
+    statusMessage.textContent = `Simulation de ${numMatches} match(s) en cours...`;
+
+    // Disable buttons
+    document.getElementById('start-simulation').disabled = true;
+    document.getElementById('cancel-simulation').disabled = true;
+
+    try {
+        const response = await fetch(`${API_URL}/simulate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ num_matches: numMatches })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+
+        // Get CSV data
+        const csvData = await response.text();
+
+        // Create download link
+        const blob = new Blob([csvData], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `simulation_${numMatches}_matches.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        statusMessage.textContent = `✅ Simulation terminée! Le fichier CSV a été téléchargé.`;
+
+        // Close modal after 2 seconds
+        setTimeout(() => {
+            document.getElementById('simulation-modal').classList.add('hidden');
+            statusDiv.classList.add('hidden');
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('cancel-simulation').disabled = false;
+        }, 2000);
+
+    } catch (error) {
+        console.error('Erreur simulation:', error);
+        statusMessage.textContent = `❌ Erreur: ${error.message}. Assurez-vous que le serveur backend est démarré (voir README).`;
+        document.getElementById('start-simulation').disabled = false;
+        document.getElementById('cancel-simulation').disabled = false;
+    }
+});

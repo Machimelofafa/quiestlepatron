@@ -20,6 +20,30 @@
                 <input type="number" id="player-count" min="2" max="6" value="2">
                 <button id="start-game" class="btn-primary">Démarrer la partie</button>
             </div>
+            <div class="simulation-section">
+                <h3>Simulation IA</h3>
+                <p>Lancer une simulation de matchs avec 4 joueurs IA</p>
+                <button id="open-simulation" class="btn-secondary">Lancer une simulation</button>
+            </div>
+        </div>
+
+        <!-- Simulation Modal -->
+        <div id="simulation-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2>Simulation de matchs IA</h2>
+                <p>Cette simulation va lancer plusieurs matchs avec 4 joueurs IA et générer un fichier CSV avec toutes les données.</p>
+                <div class="modal-form">
+                    <label for="num-matches">Nombre de matchs à simuler:</label>
+                    <input type="number" id="num-matches" min="1" max="1000" value="10">
+                    <div class="modal-buttons">
+                        <button id="start-simulation" class="btn-primary">Démarrer</button>
+                        <button id="cancel-simulation" class="btn-secondary">Annuler</button>
+                    </div>
+                    <div id="simulation-status" class="simulation-status hidden">
+                        <p id="simulation-message">Simulation en cours...</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="game-screen" class="screen hidden">
