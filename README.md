@@ -82,23 +82,14 @@ Le système utilise 4 stratégies différentes :
 
 ## Fichiers
 
-### Frontend
 - `index.html` : Interface du jeu
+- `test-simulation.html` : Page de test pour la simulation
 - `styles.css` : Style et mise en page
 - `game.js` : Logique du jeu
 - `ai-strategies.js` : Stratégies IA (Balanced, Aggressive, Conservative, ReputationFocused)
 - `ai-player.js` : Gestion des joueurs IA
 - `simulator.js` : Moteur de simulation et export CSV
 - `GDD.md` : Document de conception complet
-
-### Backend (Archive - non nécessaire pour la simulation)
-- `backend/main.py` : Serveur FastAPI (version Python - désormais obsolète)
-- `backend/game_logic.py` : Logique du jeu en Python
-- `backend/ai_player.py` : Stratégies IA (version Python)
-- `backend/simulator.py` : Moteur de simulation Python
-- `requirements.txt` : Dépendances Python
-
-**Note :** Le backend Python est maintenu pour référence, mais la simulation fonctionne désormais entièrement en JavaScript dans le navigateur.
 
 ## Technologie
 
