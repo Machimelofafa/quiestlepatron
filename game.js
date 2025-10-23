@@ -45,7 +45,7 @@ class Player {
     constructor(id, name) {
         this.id = id;
         this.name = name;
-        this.tokens = { bronze: 10, silver: 0, gold: 0 };
+        this.tokens = { bronze: 50, silver: 0, gold: 0 };
         this.employees = 1;
         this.machines = 0;
         this.reputation = 1;
@@ -283,9 +283,11 @@ class Game {
             if (player.bankrupt) continue;
 
             const costs = player.calculateCosts();
+            const tokensBeforeCosts = player.getTotalTokens();
             if (player.removeTokens(costs)) {
                 player.calculateProduction();
-                this.log(`${player.name}: -${costs} jetons (charges), Production: ${player.production} unités`, 'success');
+                const netBalance = player.getTotalTokens();
+                this.log(`${player.name}: -${costs} jetons (charges), Production: ${player.production} unités, Solde: ${netBalance} jetons`, 'success');
             } else {
                 this.log(`${player.name} ne peut pas payer ses charges! Faillite.`, 'error');
                 player.bankrupt = true;
@@ -318,7 +320,7 @@ class Game {
         }
 
         const activePlayers = this.players.filter(p => !p.bankrupt).length;
-        this.marketSize = Math.floor((diceTotal * activePlayers + coefficientSum) * this.marketPenalty);
+        this.marketSize = Math.floor((diceTotal * activePlayers * 2 + coefficientSum * 2) * this.marketPenalty);
 
         this.log(`Dés: ${dice1} + ${dice2} = ${diceTotal}, Joueurs actifs: ${activePlayers}, Coefficients: ${coefficientSum}`, 'info');
         this.log(`Taille du marché: ${this.marketSize} unités`, 'info');
@@ -348,7 +350,17 @@ class Game {
 
             player.addTokens(player.revenue);
 
-            this.log(`${player.name}: ${(marketShare * 100).toFixed(1)}% du marché, vend ${player.sales}/${player.production} unités → +${player.revenue} jetons`, 'success');
+            // Calculate missed opportunity
+            const missedSales = potentialSales - player.sales;
+            const missedRevenue = missedSales > 0 ? missedSales : 0;
+
+            let logMessage = `${player.name}: ${(marketShare * 100).toFixed(1)}% du marché, vend ${player.sales}/${player.production} unités → +${player.revenue} jetons`;
+
+            if (missedRevenue > 0) {
+                logMessage += ` (manque à gagner: ${missedRevenue} unités non produites)`;
+            }
+
+            this.log(logMessage, 'success');
         }
 
         this.render();

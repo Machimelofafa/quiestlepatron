@@ -93,7 +93,7 @@ class SimulatorGame extends Game {
         }
 
         const activePlayers = this.players.filter(p => !p.bankrupt).length;
-        this.marketSize = Math.floor((diceTotal * activePlayers + coefficientSum) * this.marketPenalty);
+        this.marketSize = Math.floor((diceTotal * activePlayers * 2 + coefficientSum * 2) * this.marketPenalty);
 
         // Calculate total reputation
         let totalReputation = 0;
