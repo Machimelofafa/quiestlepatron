@@ -29,25 +29,23 @@ class BalancedStrategy extends AIStrategy {
         const actions = [];
         const totalTokens = player.getTotalTokens();
 
-        // Invest in R&D with variable probability based on personality
-        if (totalTokens >= 5 && player.reputation < 5 && this.shouldDo(0.7)) {
+        // Invest in R&D regularly
+        if (totalTokens >= 5 && player.reputation < 5 && this.shouldDo(0.75)) {
             actions.push('invest_rd');
         }
 
-        // Hire employees with variable threshold
-        const hireThreshold = 2 - (this.aggressiveness * 0.5);
-        if (totalTokens >= 2 && player.getTotalReputation() >= hireThreshold && this.shouldDo(0.6)) {
+        // Hire employees up to 4 total
+        if (totalTokens >= 2 && player.employees < 4 && this.shouldDo(0.7)) {
             actions.push('hire_employee');
         }
 
-        // Buy machines based on capital and risk tolerance
-        const machineThreshold = 20 - (this.riskTolerance * 5);
-        if (totalTokens >= machineThreshold && this.shouldDo(0.5)) {
+        // Buy machines starting at 25 tokens with 85% probability
+        if (totalTokens >= 25 && this.shouldDo(0.85)) {
             actions.push('buy_machine');
         }
 
         // Marketing with variable probability
-        if (totalTokens >= 3 && this.shouldDo(0.3 + this.aggressiveness * 0.3)) {
+        if (totalTokens >= 3 && this.shouldDo(0.4 + this.aggressiveness * 0.3)) {
             actions.push('invest_marketing');
         }
 
@@ -66,25 +64,22 @@ class AggressiveStrategy extends AIStrategy {
         const actions = [];
         const totalTokens = player.getTotalTokens();
 
-        // Aggressively buy machines with variable cap
-        const machineCap = Math.floor(3 + this.aggressiveness * 3); // 3 to 6 machines
-        const machineThreshold = 18 + Math.random() * 6; // 18-24 tokens
-        if (totalTokens >= machineThreshold && player.machines < machineCap && this.shouldDo(0.8)) {
+        // VERY aggressive on machines - buy starting at 22 tokens
+        if (totalTokens >= 22 && this.shouldDo(0.9)) {
             actions.push('buy_machine');
-        }
-
-        // Hire many employees with variable behavior
-        if (totalTokens >= 2 && totalTokens < machineThreshold) {
-            if (this.shouldDo(0.7)) {
-                actions.push('hire_employee');
-            }
-            if (totalTokens >= 4 && this.shouldDo(0.5 * this.aggressiveness)) {
-                actions.push('hire_employee');
+            // Can buy 2 machines at once if very rich (60+ tokens)
+            if (totalTokens >= 60 && this.shouldDo(0.7)) {
+                actions.push('buy_machine');
             }
         }
 
-        // Marketing to boost sales with high probability
-        if (totalTokens >= 3 && this.shouldDo(0.6 + this.aggressiveness * 0.3)) {
+        // Hire up to 5 employees
+        if (totalTokens >= 2 && player.employees < 5 && this.shouldDo(0.75)) {
+            actions.push('hire_employee');
+        }
+
+        // Marketing constantly - almost every turn
+        if (totalTokens >= 3 && this.shouldDo(0.85)) {
             actions.push('invest_marketing');
         }
 
@@ -104,9 +99,8 @@ class ConservativeStrategy extends AIStrategy {
         const actions = [];
         const totalTokens = player.getTotalTokens();
         const operationalCosts = player.calculateCosts();
-        // Variable buffer based on risk tolerance
-        const bufferMultiplier = 2 + (1 - this.riskTolerance) * 2; // 2 to 3.6
-        const buffer = operationalCosts * bufferMultiplier;
+        // Keep only 3 turns of buffer
+        const buffer = operationalCosts * 3;
 
         // Only invest if we have a buffer
         if (totalTokens < buffer) {
@@ -118,8 +112,13 @@ class ConservativeStrategy extends AIStrategy {
         }
 
         // Invest in R&D for reputation with caution
-        if (totalTokens >= buffer + 5 && player.reputation < 5 && this.shouldDo(0.5)) {
+        if (totalTokens >= buffer + 5 && player.reputation < 5 && this.shouldDo(0.6)) {
             actions.push('invest_rd');
+        }
+
+        // Buy machines if we have a surplus
+        if (totalTokens >= buffer + 20 && this.shouldDo(0.6)) {
+            actions.push('buy_machine');
         }
 
         // Salary increases for temp reputation
@@ -143,30 +142,35 @@ class ReputationFocusedStrategy extends AIStrategy {
         const actions = [];
         const totalTokens = player.getTotalTokens();
 
-        // Prioritize R&D with variable intensity
-        if (totalTokens >= 5 && player.reputation < 5 && this.shouldDo(0.8 * this.reputationPriority)) {
+        // Double R&D if possible - prioritize getting max reputation
+        if (totalTokens >= 5 && player.reputation < 5 && this.shouldDo(0.9)) {
             actions.push('invest_rd');
-            // Try to do it twice if possible (with variability)
-            if (totalTokens >= 10 && player.reputation < 4 && this.shouldDo(0.6 * this.reputationPriority)) {
+            // Try to do it twice if possible
+            if (totalTokens >= 10 && player.reputation < 4 && this.shouldDo(0.8)) {
                 actions.push('invest_rd');
             }
         }
 
-        // Hire employees for reputation boost with variable cap
+        // Marketing almost every turn to maintain brand
+        if (totalTokens >= 3 && this.shouldDo(0.9)) {
+            actions.push('invest_marketing');
+        }
+
+        // Hire employees for reputation boost
         const employeeCap = Math.floor(2 + this.reputationPriority * 2); // 2 to 4
         if (totalTokens >= 2 && player.employees < employeeCap && this.shouldDo(0.7)) {
             actions.push('hire_employee');
+        }
+
+        // Still buy machines if rich enough
+        if (totalTokens >= 30 && this.shouldDo(0.65)) {
+            actions.push('buy_machine');
         }
 
         // Salary increases for temp reputation
         const salaryCost = player.employees * COSTS.SALARY_INCREASE;
         if (totalTokens >= salaryCost && this.shouldDo(0.6 * this.reputationPriority)) {
             actions.push('invest_salary');
-        }
-
-        // Marketing to maintain brand with variable probability
-        if (totalTokens >= 3 && this.shouldDo(0.7 * this.reputationPriority)) {
-            actions.push('invest_marketing');
         }
 
         return actions;
