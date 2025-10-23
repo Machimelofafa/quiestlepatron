@@ -140,30 +140,31 @@ class SimulatorGame extends Game {
     }
 
     processEventSilent() {
-        const random = Math.random();
-        let eventType, eventList;
+        const activePlayers = this.players.filter(p => !p.bankrupt);
 
-        if (random < 0.4) {
-            eventType = 'BONUS';
-            eventList = EVENTS.BONUS;
-        } else if (random < 0.8) {
-            eventType = 'MALUS';
-            eventList = EVENTS.MALUS;
-        } else {
-            eventType = 'CHOICE';
-            eventList = EVENTS.CHOICE;
-        }
+        // Apply 1 event per player
+        for (const player of activePlayers) {
+            const random = Math.random();
+            let eventType, eventList;
 
-        const event = eventList[Math.floor(Math.random() * eventList.length)];
+            if (random < 0.4) {
+                eventType = 'BONUS';
+                eventList = EVENTS.BONUS;
+            } else if (random < 0.8) {
+                eventType = 'MALUS';
+                eventList = EVENTS.MALUS;
+            } else {
+                eventType = 'CHOICE';
+                eventList = EVENTS.CHOICE;
+            }
 
-        // Apply event to random player or game
-        if (event.effect === 'malus' && event.name === 'Crise') {
-            event.apply(this);
-        } else {
-            const activePlayers = this.players.filter(p => !p.bankrupt);
-            if (activePlayers.length > 0) {
-                const targetPlayer = activePlayers[Math.floor(Math.random() * activePlayers.length)];
-                event.apply(targetPlayer);
+            const event = eventList[Math.floor(Math.random() * eventList.length)];
+
+            // Apply event to player or game
+            if (event.effect === 'malus' && event.name === 'Crise') {
+                event.apply(this);
+            } else {
+                event.apply(player);
             }
         }
     }

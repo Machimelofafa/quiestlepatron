@@ -402,39 +402,47 @@ class Game {
     processEvent() {
         this.log('=== Phase Événement ===', 'phase');
 
-        const random = Math.random();
-        let eventType, eventList;
+        const activePlayers = this.players.filter(p => !p.bankrupt);
+        let eventTextHTML = '';
 
-        if (random < 0.4) {
-            eventType = 'BONUS';
-            eventList = EVENTS.BONUS;
-        } else if (random < 0.8) {
-            eventType = 'MALUS';
-            eventList = EVENTS.MALUS;
-        } else {
-            eventType = 'CHOICE';
-            eventList = EVENTS.CHOICE;
-        }
+        // Apply 1 event per player
+        for (const player of activePlayers) {
+            const random = Math.random();
+            let eventType, eventList;
 
-        const event = eventList[Math.floor(Math.random() * eventList.length)];
+            if (random < 0.4) {
+                eventType = 'BONUS';
+                eventList = EVENTS.BONUS;
+            } else if (random < 0.8) {
+                eventType = 'MALUS';
+                eventList = EVENTS.MALUS;
+            } else {
+                eventType = 'CHOICE';
+                eventList = EVENTS.CHOICE;
+            }
 
-        document.getElementById('event-text').innerHTML = `
-            <strong>${eventType}: ${event.name}</strong><br>
-            ${event.description}
-        `;
+            const event = eventList[Math.floor(Math.random() * eventList.length)];
 
-        // Apply event to random player or game
-        if (event.effect === 'malus' && event.name === 'Crise') {
-            event.apply(this);
-            this.log(`Événement: ${event.name} - ${event.description}`, 'error');
-        } else {
-            const activePlayers = this.players.filter(p => !p.bankrupt);
-            if (activePlayers.length > 0) {
-                const targetPlayer = activePlayers[Math.floor(Math.random() * activePlayers.length)];
-                event.apply(targetPlayer);
-                this.log(`Événement: ${event.name} affecte ${targetPlayer.name} - ${event.description}`, 'info');
+            // Build HTML for event display
+            eventTextHTML += `
+                <div style="margin-bottom: 10px; padding: 5px; border-left: 3px solid ${eventType === 'BONUS' ? '#4CAF50' : eventType === 'MALUS' ? '#f44336' : '#2196F3'}">
+                    <strong>${player.name}: ${eventType} - ${event.name}</strong><br>
+                    ${event.description}
+                </div>
+            `;
+
+            // Apply event to player or game
+            if (event.effect === 'malus' && event.name === 'Crise') {
+                event.apply(this);
+                this.log(`Événement pour ${player.name}: ${event.name} - ${event.description} (affecte le marché)`, 'error');
+            } else {
+                event.apply(player);
+                const logType = eventType === 'BONUS' ? 'success' : eventType === 'MALUS' ? 'error' : 'info';
+                this.log(`Événement pour ${player.name}: ${event.name} - ${event.description}`, logType);
             }
         }
+
+        document.getElementById('event-text').innerHTML = eventTextHTML;
 
         this.render();
 
