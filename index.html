@@ -31,7 +31,7 @@
         <div id="simulation-modal" class="modal hidden">
             <div class="modal-content">
                 <h2>Simulation de matchs IA</h2>
-                <p>Cette simulation va lancer plusieurs matchs avec 4 joueurs IA et générer un fichier CSV avec toutes les données.</p>
+                <p>Cette simulation va lancer plusieurs matchs avec 4 joueurs IA (Balanced, Aggressive, Conservative, ReputationFocused) et générer un fichier CSV avec toutes les données. La simulation s'exécute entièrement dans votre navigateur.</p>
                 <div class="modal-form">
                     <label for="num-matches">Nombre de matchs à simuler:</label>
                     <input type="number" id="num-matches" min="1" max="1000" value="10">
@@ -116,5 +116,8 @@
     </div>
 
     <script src="game.js"></script>
+    <script src="ai-strategies.js"></script>
+    <script src="ai-player.js"></script>
+    <script src="simulator.js"></script>
 </body>
 </html>

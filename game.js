@@ -624,8 +624,6 @@ document.getElementById('start-game').addEventListener('click', () => {
 });
 
 // Simulation modal handling
-const API_URL = 'http://localhost:8000';
-
 document.getElementById('open-simulation').addEventListener('click', () => {
     document.getElementById('simulation-modal').classList.remove('hidden');
 });
@@ -654,31 +652,19 @@ document.getElementById('start-simulation').addEventListener('click', async () =
     document.getElementById('cancel-simulation').disabled = true;
 
     try {
-        const response = await fetch(`${API_URL}/simulate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ num_matches: numMatches })
+        // Create simulator
+        const simulator = new Simulator();
+
+        // Run simulation with progress updates
+        const results = await simulator.runSimulation(numMatches, (current, total) => {
+            statusMessage.textContent = `Simulation en cours... ${current}/${total} matchs`;
         });
 
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
+        statusMessage.textContent = `Génération du fichier CSV...`;
 
-        // Get CSV data
-        const csvData = await response.text();
-
-        // Create download link
-        const blob = new Blob([csvData], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `simulation_${numMatches}_matches.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+        // Download CSV
+        const filename = `simulation_${numMatches}_matches.csv`;
+        simulator.downloadCSV(results, filename);
 
         statusMessage.textContent = `✅ Simulation terminée! Le fichier CSV a été téléchargé.`;
 
@@ -692,7 +678,7 @@ document.getElementById('start-simulation').addEventListener('click', async () =
 
     } catch (error) {
         console.error('Erreur simulation:', error);
-        statusMessage.textContent = `❌ Erreur: ${error.message}. Assurez-vous que le serveur backend est démarré (voir README).`;
+        statusMessage.textContent = `❌ Erreur: ${error.message}`;
         document.getElementById('start-simulation').disabled = false;
         document.getElementById('cancel-simulation').disabled = false;
     }
