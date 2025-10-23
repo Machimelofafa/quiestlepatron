@@ -246,13 +246,16 @@ class Simulator {
     }
 
     runMatch(matchNumber) {
-        // Create 4 AI players with different strategies
+        // Create 4 AI players with different strategies (newly instantiated each match for variability)
         const strategies = [
             new BalancedStrategy(),
             new AggressiveStrategy(),
             new ConservativeStrategy(),
             new ReputationFocusedStrategy()
         ];
+
+        // Shuffle strategies to randomize player assignments each match
+        this.shuffleArray(strategies);
 
         const aiPlayers = strategies.map((strategy, index) => {
             const player = new Player(index, strategy.name);
@@ -273,6 +276,15 @@ class Simulator {
         }
 
         return matchData;
+    }
+
+    // Fisher-Yates shuffle algorithm
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
     toCSV(results) {
