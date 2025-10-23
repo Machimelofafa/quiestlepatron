@@ -405,46 +405,56 @@ class Game {
         const activePlayers = this.players.filter(p => !p.bankrupt);
         let eventTextHTML = '';
 
-        // Apply 1 event per player
-        for (const player of activePlayers) {
-            const random = Math.random();
-            let eventType, eventList;
+        // Apply only 1 event per turn to a random player
+        // Use dice to randomly select a player (1-6)
+        const diceRoll = Math.floor(Math.random() * activePlayers.length);
+        const selectedPlayer = activePlayers[diceRoll];
 
-            if (random < 0.4) {
-                eventType = 'BONUS';
-                eventList = EVENTS.BONUS;
-            } else if (random < 0.8) {
-                eventType = 'MALUS';
-                eventList = EVENTS.MALUS;
-            } else {
-                eventType = 'CHOICE';
-                eventList = EVENTS.CHOICE;
-            }
+        this.log(`Tirage au dé : le joueur ${selectedPlayer.name} est sélectionné pour l'événement`, 'info');
 
-            const event = eventList[Math.floor(Math.random() * eventList.length)];
+        const random = Math.random();
+        let eventType, eventList;
 
-            // Build HTML for event display
-            eventTextHTML += `
-                <div style="margin-bottom: 10px; padding: 5px; border-left: 3px solid ${eventType === 'BONUS' ? '#4CAF50' : eventType === 'MALUS' ? '#f44336' : '#2196F3'}">
-                    <strong>${player.name}: ${eventType} - ${event.name}</strong><br>
-                    ${event.description}
-                </div>
-            `;
+        if (random < 0.4) {
+            eventType = 'BONUS';
+            eventList = EVENTS.BONUS;
+        } else if (random < 0.8) {
+            eventType = 'MALUS';
+            eventList = EVENTS.MALUS;
+        } else {
+            eventType = 'CHOICE';
+            eventList = EVENTS.CHOICE;
+        }
 
-            // Apply event to player or game
-            if (event.effect === 'malus' && event.name === 'Crise') {
-                event.apply(this);
-                this.log(`Événement pour ${player.name}: ${event.name} - ${event.description} (affecte le marché)`, 'error');
-            } else {
-                event.apply(player);
-                const logType = eventType === 'BONUS' ? 'success' : eventType === 'MALUS' ? 'error' : 'info';
-                this.log(`Événement pour ${player.name}: ${event.name} - ${event.description}`, logType);
-            }
+        const event = eventList[Math.floor(Math.random() * eventList.length)];
+
+        // Build HTML for event display
+        eventTextHTML = `
+            <div style="margin-bottom: 10px; padding: 5px; border-left: 3px solid ${eventType === 'BONUS' ? '#4CAF50' : eventType === 'MALUS' ? '#f44336' : '#2196F3'}">
+                <strong>${selectedPlayer.name}: ${eventType} - ${event.name}</strong><br>
+                ${event.description}
+            </div>
+        `;
+
+        // Apply event to player or game
+        if (event.effect === 'malus' && event.name === 'Crise') {
+            event.apply(this);
+            this.log(`Événement pour ${selectedPlayer.name}: ${event.name} - ${event.description} (affecte le marché)`, 'error');
+        } else {
+            event.apply(selectedPlayer);
+            const logType = eventType === 'BONUS' ? 'success' : eventType === 'MALUS' ? 'error' : 'info';
+            this.log(`Événement pour ${selectedPlayer.name}: ${event.name} - ${event.description}`, logType);
         }
 
         document.getElementById('event-text').innerHTML = eventTextHTML;
 
         this.render();
+
+        // Disable the event button to prevent drawing another card
+        const eventButton = document.querySelector('#phase4-actions button[onclick="game.processEvent()"]');
+        if (eventButton) {
+            eventButton.disabled = true;
+        }
 
         document.getElementById('next-turn-btn').classList.remove('hidden');
     }
@@ -517,6 +527,14 @@ class Game {
         // Show current phase
         document.getElementById(`phase${phase}-actions`).classList.remove('hidden');
         document.getElementById('next-turn-btn').classList.add('hidden');
+
+        // Re-enable event button when entering phase 4
+        if (phase === 4) {
+            const eventButton = document.querySelector('#phase4-actions button[onclick="game.processEvent()"]');
+            if (eventButton) {
+                eventButton.disabled = false;
+            }
+        }
 
         // Update phase name
         const phaseNames = {
