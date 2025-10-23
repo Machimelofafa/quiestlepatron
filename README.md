@@ -43,26 +43,7 @@ Prototype webapp du jeu de gestion économique "Qui est le Patron?". Incarnez un
 
 ### Fonctionnalité de simulation
 
-Le jeu inclut maintenant un système de simulation permettant de lancer plusieurs matchs avec 4 joueurs IA et d'exporter les données en CSV.
-
-### Démarrer le serveur de simulation
-
-1. Installer les dépendances Python :
-```bash
-pip install -r requirements.txt
-```
-
-2. Lancer le serveur backend :
-```bash
-python -m uvicorn backend.main:app --reload
-```
-
-Ou utilisez le script de démarrage :
-```bash
-python run_server.py
-```
-
-Le serveur démarrera sur `http://localhost:8000`
+Le jeu inclut maintenant un système de simulation permettant de lancer plusieurs matchs avec 4 joueurs IA et d'exporter les données en CSV. **La simulation s'exécute entièrement dans votre navigateur** - aucun backend nécessaire !
 
 ### Utiliser la simulation
 
@@ -71,6 +52,8 @@ Le serveur démarrera sur `http://localhost:8000`
 3. Entrez le nombre de matchs à simuler (1-1000)
 4. Cliquez sur "Démarrer"
 5. Le fichier CSV sera automatiquement téléchargé
+
+La simulation s'exécute de manière asynchrone avec des mises à jour de progression. Pour de meilleures performances, elle traite les matchs par lots pour éviter de bloquer le navigateur.
 
 ### Format des données CSV
 
@@ -103,19 +86,24 @@ Le système utilise 4 stratégies différentes :
 - `index.html` : Interface du jeu
 - `styles.css` : Style et mise en page
 - `game.js` : Logique du jeu
+- `ai-strategies.js` : Stratégies IA (Balanced, Aggressive, Conservative, ReputationFocused)
+- `ai-player.js` : Gestion des joueurs IA
+- `simulator.js` : Moteur de simulation et export CSV
 - `GDD.md` : Document de conception complet
 
-### Backend (Simulation)
-- `backend/main.py` : Serveur FastAPI
+### Backend (Archive - non nécessaire pour la simulation)
+- `backend/main.py` : Serveur FastAPI (version Python - désormais obsolète)
 - `backend/game_logic.py` : Logique du jeu en Python
-- `backend/ai_player.py` : Stratégies IA
-- `backend/simulator.py` : Moteur de simulation et export CSV
+- `backend/ai_player.py` : Stratégies IA (version Python)
+- `backend/simulator.py` : Moteur de simulation Python
 - `requirements.txt` : Dépendances Python
+
+**Note :** Le backend Python est maintenu pour référence, mais la simulation fonctionne désormais entièrement en JavaScript dans le navigateur.
 
 ## Technologie
 
-- **Frontend** : HTML/CSS/JavaScript pur (aucune dépendance)
-- **Backend** : Python 3.8+, FastAPI, Uvicorn
+- **Frontend** : HTML/CSS/JavaScript pur (aucune dépendance, fonctionne directement dans le navigateur)
+- **Simulation** : JavaScript pur (s'exécute côté client)
 
 ---
 
